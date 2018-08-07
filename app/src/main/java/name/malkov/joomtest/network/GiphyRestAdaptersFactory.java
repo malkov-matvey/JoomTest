@@ -23,7 +23,7 @@ public class GiphyRestAdaptersFactory {
     private static GiphyRestAdapter createInstance() {
         final Retrofit r = new Retrofit.Builder().baseUrl(NetworkContants.giphyEndpoint)
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         return r.create(GiphyRestAdapter.class);
     }

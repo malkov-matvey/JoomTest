@@ -2,4 +2,6 @@
 <resources>
     <dimen name="offset_small">5dp</dimen>
 
+    <integer name="grid_size">2</integer>
+
 </resources>
