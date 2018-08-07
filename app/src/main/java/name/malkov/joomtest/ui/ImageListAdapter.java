@@ -11,15 +11,21 @@ import com.bumptech.glide.request.target.ViewTarget;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.functions.Consumer;
 import name.malkov.joomtest.network.model.GiphyImage;
 import name.malkov.joomtest.network.model.GiphyItem;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ImageViewHolder> {
 
     private List<GiphyItem> items = new ArrayList<>();
+    private Consumer<GiphyItem> click;
+
+    ImageListAdapter(Consumer<GiphyItem> click) {
+        this.click = click;
+    }
 
     public void addItems(List<GiphyItem> is) {
-        this.items.addAll(is);
+        this.items = is;
         notifyDataSetChanged();
     }
 
@@ -34,7 +40,15 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder vh, int i) {
-        final GiphyImage image = items.get(i).getImages().getFixedWidthPreview();
+        final GiphyItem item = items.get(i);
+        final GiphyImage image = item.getImages().getFixedWidthPreview();
+        vh.itemView.setOnClickListener(view -> {
+            try {
+                click.accept(item);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         vh.target = Glide.with(vh.itemView)
                 .load(image.getUrl())
                 .into(vh.image);

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -15,13 +17,18 @@ import android.view.ViewGroup;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 import name.malkov.joomtest.R;
+import name.malkov.joomtest.network.model.GiphyItem;
 import name.malkov.joomtest.ui.observable.PagingRecyclerObservable;
+import name.malkov.joomtest.ui.observable.SwipeRefreshObservable;
 import name.malkov.joomtest.viewmodel.GiphyTrendingViewModel;
 
 public class GiphyListFragment extends Fragment {
 
     private final CompositeDisposable disposable = new CompositeDisposable();
+
+    private final Consumer<GiphyItem> click = this::openPreview;
 
     public static Fragment newInstance() {
         return new GiphyListFragment();
@@ -42,16 +49,40 @@ public class GiphyListFragment extends Fragment {
         int smallOffsetPx = getResources().getDimensionPixelOffset(R.dimen.offset_small);
         list.addItemDecoration(new GridSpacingDecorator(gridSize, smallOffsetPx));
 
-        final GiphyTrendingViewModel vm = ViewModelProviders.of(this).get(GiphyTrendingViewModel.class);
-        final ImageListAdapter adapter = new ImageListAdapter();
-        StaggeredGridLayoutManager lm = new StaggeredGridLayoutManager(gridSize, StaggeredGridLayoutManager.VERTICAL);
-        Observable<Integer> paging = PagingRecyclerObservable.paging(list, 0.75f);
-        Observable<Boolean> refreshSignal = Observable.just(true);
+        final ImageListAdapter adapter = new ImageListAdapter(click);
+        final StaggeredGridLayoutManager lm = new StaggeredGridLayoutManager(gridSize, StaggeredGridLayoutManager.VERTICAL);
+        final Observable<Integer> paging = PagingRecyclerObservable.paging(list, 0.75f);
+        final Observable<Boolean> refreshSignal = SwipeRefreshObservable.swipe(refresh, true);
 
         lm.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         list.setLayoutManager(lm);
         list.setAdapter(adapter);
 
-        disposable.add(vm.bind(paging, refreshSignal).observeOn(AndroidSchedulers.mainThread()).subscribe(adapter::addItems));
+        final GiphyTrendingViewModel vm = ViewModelProviders
+                .of(this)
+                .get(GiphyTrendingViewModel.class);
+        disposable.add(vm.bind(paging, refreshSignal)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(items -> refresh.setRefreshing(false))
+                .subscribe(adapter::addItems));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (!disposable.isDisposed()) {
+            disposable.dispose();
+        }
+    }
+
+    private void openPreview(GiphyItem item) {
+        final FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            final String tag = PreviewFragment.class.getSimpleName();
+            final FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.add(R.id.fragmentFrame, PreviewFragment.newInstance(), tag);
+            ft.addToBackStack(tag);
+            ft.commit();
+        }
     }
 }
