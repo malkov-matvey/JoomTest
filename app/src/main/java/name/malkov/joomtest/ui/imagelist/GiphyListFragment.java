@@ -1,4 +1,4 @@
-package name.malkov.joomtest.ui;
+package name.malkov.joomtest.ui.imagelist;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -17,18 +17,19 @@ import android.view.ViewGroup;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import name.malkov.joomtest.R;
-import name.malkov.joomtest.network.model.GiphyItem;
+import name.malkov.joomtest.ui.FrescoDrawingProtocol;
 import name.malkov.joomtest.ui.observable.PagingRecyclerObservable;
 import name.malkov.joomtest.ui.observable.SwipeRefreshObservable;
+import name.malkov.joomtest.ui.preview.PreviewFragment;
 import name.malkov.joomtest.viewmodel.GiphyTrendingViewModel;
+import name.malkov.joomtest.viewmodel.model.ImageItem;
 
 public class GiphyListFragment extends Fragment {
 
     private final CompositeDisposable disposable = new CompositeDisposable();
 
-    private final Consumer<GiphyItem> click = this::openPreview;
+    private final ClickConsumer<ImageItem> click = this::openPreview;
 
     public static Fragment newInstance() {
         return new GiphyListFragment();
@@ -49,7 +50,7 @@ public class GiphyListFragment extends Fragment {
         int smallOffsetPx = getResources().getDimensionPixelOffset(R.dimen.offset_small);
         list.addItemDecoration(new EndlessGridSpacingDecorator(gridSize, smallOffsetPx));
 
-        final ImageListAdapter adapter = new ImageListAdapter(click);
+        final ImageListAdapter adapter = new ImageListAdapter(new FrescoDrawingProtocol(), click);
         final StaggeredGridLayoutManager lm = new StaggeredGridLayoutManager(gridSize, StaggeredGridLayoutManager.VERTICAL);
         final Observable<Integer> paging = PagingRecyclerObservable.paging(list, 0.75f);
         final Observable<Boolean> refreshSignal = SwipeRefreshObservable.swipe(refresh, true);
@@ -75,12 +76,12 @@ public class GiphyListFragment extends Fragment {
         }
     }
 
-    private void openPreview(GiphyItem item) {
+    private void openPreview(ImageItem item) {
         final FragmentManager fragmentManager = getFragmentManager();
         if (fragmentManager != null) {
             final String tag = PreviewFragment.class.getSimpleName();
             final FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.add(R.id.fragmentFrame, PreviewFragment.newInstance(), tag);
+            ft.add(R.id.fragmentFrame, PreviewFragment.newInstanceItem(item), tag);
             ft.addToBackStack(tag);
             ft.commit();
         }

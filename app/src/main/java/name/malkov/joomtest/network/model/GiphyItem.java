@@ -2,7 +2,7 @@ package name.malkov.joomtest.network.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class GiphyItem {
+class GiphyItem {
 
     @SerializedName("id")
     private String id;
@@ -16,26 +16,19 @@ public class GiphyItem {
     @SerializedName("images")
     private GiphyImages images;
 
-    public GiphyItem(String id, String url, GiphyUser user, GiphyImages images) {
-        this.id = id;
-        this.url = url;
-        this.user = user;
-        this.images = images;
-    }
-
-    public String getId() {
+    String getId() {
         return id;
     }
 
-    public String getUrl() {
+    String getUrl() {
         return url;
     }
 
-    public GiphyUser getUser() {
+    GiphyUser getUser() {
         return user;
     }
 
-    public GiphyImages getImages() {
+    GiphyImages getImages() {
         return images;
     }
 }

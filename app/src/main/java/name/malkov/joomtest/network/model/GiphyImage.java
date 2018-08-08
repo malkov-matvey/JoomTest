@@ -2,7 +2,7 @@ package name.malkov.joomtest.network.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class GiphyImage {
+class GiphyImage {
 
     @SerializedName("url")
     private String url;
@@ -16,19 +16,19 @@ public class GiphyImage {
     @SerializedName("webp")
     private String webpUrl;
 
-    public String getWebpUrl() {
+    String getWebpUrl() {
         return webpUrl;
     }
 
-    public String getUrl() {
+    String getUrl() {
         return url;
     }
 
-    public int getWidthPx() {
+    int getWidthPx() {
         return widthPx;
     }
 
-    public int getHeightPx() {
+    int getHeightPx() {
         return heightPx;
     }
 }

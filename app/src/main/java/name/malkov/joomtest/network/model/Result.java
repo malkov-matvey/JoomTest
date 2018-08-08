@@ -9,11 +9,11 @@ public class Result {
     @SerializedName("data")
     private List<GiphyItem> list;
 
-    public Result(List<GiphyItem> list) {
+    Result(List<GiphyItem> list) {
         this.list = list;
     }
 
-    public List<GiphyItem> getList() {
+    List<GiphyItem> getList() {
         return list;
     }
 }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="offset_small">5dp</dimen>
+    <dimen name="offset_medium">10dp</dimen>
+    <dimen name="offset_large">20dp</dimen>
+
 
     <integer name="grid_size">2</integer>
 

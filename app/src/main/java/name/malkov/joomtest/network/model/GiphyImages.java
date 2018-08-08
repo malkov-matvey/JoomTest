@@ -2,19 +2,19 @@ package name.malkov.joomtest.network.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class GiphyImages {
+class GiphyImages {
 
-    @SerializedName("480w_still")
-    private GiphyImage fixedWidthPreview;
+    @SerializedName("downsized")
+    private GiphyImage downsizedOriginal;
 
     @SerializedName("fixed_width")
-    private GiphyImage fixedWidthAnimated;
+    private GiphyImage fixedWidthPreview;
 
-    public GiphyImage getFixedWidthAnimated() {
-        return fixedWidthAnimated;
+    GiphyImage getFixedWidthPreview() {
+        return fixedWidthPreview;
     }
 
-    public GiphyImage getFixedWidthPreview() {
-        return fixedWidthPreview;
+    GiphyImage getDownsizedOriginal() {
+        return downsizedOriginal;
     }
 }

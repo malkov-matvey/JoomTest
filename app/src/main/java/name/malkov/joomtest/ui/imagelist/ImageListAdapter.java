@@ -1,31 +1,32 @@
-package name.malkov.joomtest.ui;
+package name.malkov.joomtest.ui.imagelist;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.functions.Consumer;
-import name.malkov.joomtest.network.model.GiphyImage;
-import name.malkov.joomtest.network.model.GiphyItem;
+import name.malkov.joomtest.ui.ImageDrawingProtocol;
+import name.malkov.joomtest.viewmodel.model.Image;
+import name.malkov.joomtest.viewmodel.model.ImageItem;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ImageViewHolder> {
 
-    private List<GiphyItem> items = new ArrayList<>();
-    private Consumer<GiphyItem> click;
+    private List<ImageItem> items = new ArrayList<>();
+    private ClickConsumer<ImageItem> click;
+    private ImageDrawingProtocol<SimpleDraweeView> imageProtocol;
 
-    ImageListAdapter(Consumer<GiphyItem> click) {
+    ImageListAdapter(ImageDrawingProtocol<SimpleDraweeView> imageDrawingProtocol, ClickConsumer<ImageItem> click) {
         this.click = click;
+        this.imageProtocol = imageDrawingProtocol;
     }
 
-    public void addItems(List<GiphyItem> is) {
+    public void addItems(List<ImageItem> is) {
         int old = this.items.size();
         this.items = is;
         //hack for replacing items after refresh.
@@ -51,26 +52,21 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder vh, int i) {
-        final GiphyItem item = items.get(i);
-        final GiphyImage image = item.getImages().getFixedWidthAnimated();
-        vh.image.setAspectRatio(image.getWidthPx() / (float) image.getHeightPx());
+        final ImageItem item = items.get(i);
+        final Image image = item.getThumb();
+        if (image.getWidthPx() != 0 && image.getHeightPx() != 0) {
+            final float ratio = image.getWidthPx() / (float) image.getHeightPx();
+            vh.image.setAspectRatio(ratio);
+        }
         vh.itemView.setOnClickListener(view -> {
-            try {
-                click.accept(item);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            click.consume(item);
         });
-        vh.image.setController(
-                Fresco.newDraweeControllerBuilder()
-                        .setUri(Uri.parse(image.getWebpUrl())).setAutoPlayAnimations(true)
-                        .build()
-        );
+        imageProtocol.showThumbAnimation(vh.image, Uri.parse(image.getWebpUrl()));
     }
 
     @Override
     public void onViewRecycled(@NonNull ImageViewHolder vh) {
-        vh.image.setController(null);
+        imageProtocol.cancel(vh.image);
     }
 
     @Override

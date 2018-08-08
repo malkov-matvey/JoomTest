@@ -1,4 +1,4 @@
-package name.malkov.joomtest.ui;
+package name.malkov.joomtest.ui.imagelist;
 
 import android.graphics.Rect;
 import android.support.annotation.NonNull;

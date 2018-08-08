@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">JoomTest</string>
+    <string name="action_goto_profile">GO TO\nPROFILE</string>
+    <string name="fmt_twitter">Twitter: %s</string>
+    <string name="fmt_username">Posted by: %s</string>
+    <string name="fmt_realname">Real name: %s</string>
 </resources>

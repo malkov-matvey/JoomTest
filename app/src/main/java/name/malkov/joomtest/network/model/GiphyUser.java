@@ -16,4 +16,26 @@ public class GiphyUser {
     @SerializedName("profile_url")
     private String profileUrl;
 
+    @SerializedName("twitter")
+    private String twitterHandle;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public String getProfileUrl() {
+        return profileUrl;
+    }
+
+    public String getTwitterHandle() {
+        return twitterHandle;
+    }
 }
