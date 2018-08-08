@@ -1,5 +1,6 @@
 package name.malkov.joomtest.ui.observable;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
@@ -12,20 +13,20 @@ public class PagingRecyclerObservable {
     //[0 .. 1]
     public static Observable<Integer> paging(final RecyclerView rv, final float threshold) {
         final Observable<Integer> paging = Observable.create(emitter -> {
-            final int[] pos = new int[2];
             final RecyclerView.LayoutManager lm = rv.getLayoutManager();
             if (!(lm instanceof StaggeredGridLayoutManager)) {
                 throw new IllegalStateException("only GridLayoutManager supported by PagingObs");
             }
             final StaggeredGridLayoutManager llm = (StaggeredGridLayoutManager) lm;
+            final int[] pos = new int[llm.getSpanCount()];
 
             final RecyclerView.OnScrollListener sl = new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 }
 
                 @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     RecyclerView.Adapter adapter = recyclerView.getAdapter();
                     if (adapter != null) {
                         llm.findLastVisibleItemPositions(pos);

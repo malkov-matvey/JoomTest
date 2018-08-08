@@ -47,7 +47,7 @@ public class GiphyListFragment extends Fragment {
 
         final int gridSize = getResources().getInteger(R.integer.grid_size);
         int smallOffsetPx = getResources().getDimensionPixelOffset(R.dimen.offset_small);
-        list.addItemDecoration(new GridSpacingDecorator(gridSize, smallOffsetPx));
+        list.addItemDecoration(new EndlessGridSpacingDecorator(gridSize, smallOffsetPx));
 
         final ImageListAdapter adapter = new ImageListAdapter(click);
         final StaggeredGridLayoutManager lm = new StaggeredGridLayoutManager(gridSize, StaggeredGridLayoutManager.VERTICAL);

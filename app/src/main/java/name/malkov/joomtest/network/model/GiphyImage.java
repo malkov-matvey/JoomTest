@@ -13,10 +13,11 @@ public class GiphyImage {
     @SerializedName("height")
     private int heightPx;
 
-    public GiphyImage(String url, int widthPx, int heightPx) {
-        this.url = url;
-        this.widthPx = widthPx;
-        this.heightPx = heightPx;
+    @SerializedName("webp")
+    private String webpUrl;
+
+    public String getWebpUrl() {
+        return webpUrl;
     }
 
     public String getUrl() {

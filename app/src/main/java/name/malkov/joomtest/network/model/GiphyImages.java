@@ -7,8 +7,11 @@ public class GiphyImages {
     @SerializedName("480w_still")
     private GiphyImage fixedWidthPreview;
 
-    public GiphyImages(GiphyImage fixedWidthPreview) {
-        this.fixedWidthPreview = fixedWidthPreview;
+    @SerializedName("fixed_width")
+    private GiphyImage fixedWidthAnimated;
+
+    public GiphyImage getFixedWidthAnimated() {
+        return fixedWidthAnimated;
     }
 
     public GiphyImage getFixedWidthPreview() {

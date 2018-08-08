@@ -1,7 +1,6 @@
 package name.malkov.joomtest.viewmodel;
 
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,6 @@ public class GiphyTrendingViewModel extends ViewModel {
         return refresh
                 .switchMap(v -> paging.startWith(0)
                         .observeOn(Schedulers.io())
-                        .doOnNext(offset -> Log.e("OFFSETTING!", offset.toString()))
                         .flatMap(offset -> giphyAdapter.trending("303pB4pvFt2rurFmoeR2916L676zmtXg", 30, offset))
                         .map(Result::getList).scan(Collections.emptyList(), Utils::mergeLists));
     }
