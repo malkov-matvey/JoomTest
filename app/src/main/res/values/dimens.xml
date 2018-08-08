@@ -4,6 +4,8 @@
     <dimen name="offset_medium">10dp</dimen>
     <dimen name="offset_large">20dp</dimen>
 
+    <dimen name="text_size_large">20sp</dimen>
+
 
     <integer name="grid_size">2</integer>
 

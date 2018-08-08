@@ -8,12 +8,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import name.malkov.joomtest.R;
-import name.malkov.joomtest.ui.imagelist.GiphyListFragment;
+import name.malkov.joomtest.ui.imagelist.ImageListFragment;
 import name.malkov.joomtest.ui.preview.PreviewFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String listFragmentTag = GiphyListFragment.class.getSimpleName();
+    private final String listFragmentTag = ImageListFragment.class.getSimpleName();
     ;
 
     @Override
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showListScreen() {
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragmentFrame, GiphyListFragment.newInstance(), listFragmentTag);
+        ft.replace(R.id.fragmentFrame, ImageListFragment.newInstance(), listFragmentTag);
         ft.commit();
     }
 

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import name.malkov.joomtest.Utils;
 import name.malkov.joomtest.network.GiphyRestAdapter;
@@ -35,9 +36,11 @@ public class ImagesViewModel extends ViewModel {
                         .observeOn(Schedulers.io())
                         .flatMap(offset -> giphyAdapter.trending(apiKey, 30, offset))
                         .map(ResponseConverter::convertGiphyList)
-                        .scan(Collections.emptyList(), Utils::mergeLists));
+                        .onErrorReturn(throwable -> Collections.emptyList())
+                        .scan(Utils::mergeLists));
     }
 
+    //better to use Data classes here, but meh, it's java, so stick with Pair for this simple example
     public Observable<Pair<ImageItem, Integer>> bindById(String id, Observable<Boolean> loadingSignals) {
         return loadingSignals.switchMap(r ->
                 giphyAdapter.gifById(id, apiKey)

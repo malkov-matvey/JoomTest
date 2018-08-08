@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RetryText">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:drawableTop">@drawable/ic_error_outline_black_24dp</item>
+        <item name="android:drawablePadding">@dimen/offset_large</item>
+        <item name="android:gravity">center</item>
+    </style>
+
 </resources>
