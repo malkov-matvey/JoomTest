@@ -1,5 +1,6 @@
 package name.malkov.joomtest.ui.preview;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,8 +17,11 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import name.malkov.joomtest.R;
 import name.malkov.joomtest.ui.FrescoDrawingProtocol;
+import name.malkov.joomtest.viewmodel.ImagesViewModel;
 import name.malkov.joomtest.viewmodel.model.Image;
 import name.malkov.joomtest.viewmodel.model.ImageItem;
 import name.malkov.joomtest.viewmodel.model.User;
@@ -25,14 +29,22 @@ import name.malkov.joomtest.viewmodel.model.User;
 public class PreviewFragment extends Fragment {
 
     private static String ITEM_KEY = "item_key";
-
+    private static String ID_KEY = "id_key";
+    private final CompositeDisposable disposable = new CompositeDisposable();
+    private final FrescoDrawingProtocol fresco = new FrescoDrawingProtocol();
     private Button gotoProfile;
     private TextView username;
     private TextView displayName;
     private TextView twitter;
     private SimpleDraweeView image;
 
-    private final FrescoDrawingProtocol fresco = new FrescoDrawingProtocol();
+    public static Fragment newInstanceId(final String id) {
+        final PreviewFragment f = new PreviewFragment();
+        Bundle bundle = new Bundle(1);
+        bundle.putString(ID_KEY, id);
+        f.setArguments(bundle);
+        return f;
+    }
 
     public static Fragment newInstanceItem(final ImageItem item) {
         final PreviewFragment f = new PreviewFragment();
@@ -59,7 +71,31 @@ public class PreviewFragment extends Fragment {
         if (getArguments() != null && getArguments().containsKey(ITEM_KEY)) {
             final ImageItem item = getArguments().getParcelable(ITEM_KEY);
             showItem(view.getContext(), item);
+        } else if (getArguments() != null && getArguments().containsKey(ID_KEY)) {
+            final String id = getArguments().getString(ID_KEY);
+            final ImagesViewModel vm = ViewModelProviders.of(this).get(ImagesViewModel.class);
+            loadItem(vm, id);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (!disposable.isDisposed()) {
+            disposable.dispose();
+        }
+    }
+
+    private void loadItem(ImagesViewModel vm, String id) {
+        disposable.add(vm.bindById(id)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(item -> {
+                    final Context context = getContext();
+                    if (context != null) {
+                        showItem(context, item);
+                    }
+                }));
+
     }
 
     private void setTextMaybe(final TextView tv, final String fmt, final String text) {

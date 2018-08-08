@@ -22,7 +22,7 @@ import name.malkov.joomtest.ui.FrescoDrawingProtocol;
 import name.malkov.joomtest.ui.observable.PagingRecyclerObservable;
 import name.malkov.joomtest.ui.observable.SwipeRefreshObservable;
 import name.malkov.joomtest.ui.preview.PreviewFragment;
-import name.malkov.joomtest.viewmodel.GiphyTrendingViewModel;
+import name.malkov.joomtest.viewmodel.ImagesViewModel;
 import name.malkov.joomtest.viewmodel.model.ImageItem;
 
 public class GiphyListFragment extends Fragment {
@@ -59,9 +59,9 @@ public class GiphyListFragment extends Fragment {
         list.setLayoutManager(lm);
         list.setAdapter(adapter);
 
-        final GiphyTrendingViewModel vm = ViewModelProviders
+        final ImagesViewModel vm = ViewModelProviders
                 .of(this)
-                .get(GiphyTrendingViewModel.class);
+                .get(ImagesViewModel.class);
         disposable.add(vm.bind(paging, refreshSignal)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(items -> refresh.setRefreshing(false))

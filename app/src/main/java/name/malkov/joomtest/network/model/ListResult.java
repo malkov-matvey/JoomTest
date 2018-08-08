@@ -4,12 +4,12 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Result {
+public class ListResult {
 
     @SerializedName("data")
     private List<GiphyItem> list;
 
-    Result(List<GiphyItem> list) {
+    ListResult(List<GiphyItem> list) {
         this.list = list;
     }
 

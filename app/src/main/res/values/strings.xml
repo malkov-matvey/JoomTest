@@ -4,4 +4,7 @@
     <string name="fmt_twitter">Twitter: %s</string>
     <string name="fmt_username">Posted by: %s</string>
     <string name="fmt_realname">Real name: %s</string>
+
+    <string name="action_label_http_giphy">Giphy website</string>
+    <string name="action_label_scheme_giphy">Giphy</string>
 </resources>

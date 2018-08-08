@@ -10,13 +10,17 @@ import name.malkov.joomtest.viewmodel.model.User;
 
 public class ResponseConverter {
 
-    public static List<ImageItem> convertGiphyList(Result response) {
+    public static List<ImageItem> convertGiphyList(ListResult response) {
         final List<GiphyItem> list = response.getList();
         final List<ImageItem> result = new ArrayList<>(list.size());
         for (final GiphyItem gi : list) {
             result.add(convertItem(gi));
         }
         return Collections.unmodifiableList(result);
+    }
+
+    public static ImageItem convertGiphySingleItem(SingleResult response) {
+        return convertItem(response.getItem());
     }
 
     private static ImageItem convertItem(final GiphyItem item) {
