@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         final FragmentManager fm = getSupportFragmentManager();
         final FragmentTransaction ft = fm.beginTransaction();
         final String previewTag = PreviewFragment.class.getSimpleName();
+        fm.popBackStack();
         ft.add(R.id.fragmentFrame, PreviewFragment.newInstanceId(id), previewTag);
         if (fm.findFragmentByTag(listFragmentTag) != null) {
             ft.addToBackStack(previewTag);

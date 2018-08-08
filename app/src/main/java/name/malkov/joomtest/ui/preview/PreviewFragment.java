@@ -17,10 +17,12 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import name.malkov.joomtest.R;
 import name.malkov.joomtest.ui.FrescoDrawingProtocol;
+import name.malkov.joomtest.ui.observable.ClickObservable;
 import name.malkov.joomtest.viewmodel.ImagesViewModel;
 import name.malkov.joomtest.viewmodel.model.Image;
 import name.malkov.joomtest.viewmodel.model.ImageItem;
@@ -37,6 +39,10 @@ public class PreviewFragment extends Fragment {
     private TextView displayName;
     private TextView twitter;
     private SimpleDraweeView image;
+    private TextView retry;
+    private View namesRoot;
+    private View loader;
+
 
     public static Fragment newInstanceId(final String id) {
         final PreviewFragment f = new PreviewFragment();
@@ -67,6 +73,9 @@ public class PreviewFragment extends Fragment {
         displayName = view.findViewById(R.id.displayName);
         twitter = view.findViewById(R.id.twitter);
         image = view.findViewById(R.id.image_content);
+        namesRoot = view.findViewById(R.id.names_root);
+        retry = view.findViewById(R.id.retry);
+        loader = view.findViewById(R.id.loader);
 
         if (getArguments() != null && getArguments().containsKey(ITEM_KEY)) {
             final ImageItem item = getArguments().getParcelable(ITEM_KEY);
@@ -87,14 +96,25 @@ public class PreviewFragment extends Fragment {
     }
 
     private void loadItem(ImagesViewModel vm, String id) {
-        disposable.add(vm.bindById(id)
+        final Observable<Boolean> loadingSignals = ClickObservable.clicks(this.retry, true)
+                .doOnNext(disposable -> setUiLoading());
+        disposable.add(vm.bindById(id, loadingSignals)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(item -> {
-                    final Context context = getContext();
-                    if (context != null) {
-                        showItem(context, item);
-                    }
-                }));
+                .subscribe(
+                        item -> {
+                            if (item.second == ImagesViewModel.CODE_OK) {
+                                final Context context = getContext();
+                                if (context != null) {
+                                    showItem(context, item.first);
+                                }
+                            } else if (item.second == ImagesViewModel.CODE_NOT_FOUND) {
+                                setUiError(R.string.not_found_error, false);
+                            } else {
+                                setUiError(R.string.error_loading_retry, true);
+                            }
+
+                        }
+                ));
 
     }
 
@@ -108,6 +128,7 @@ public class PreviewFragment extends Fragment {
     }
 
     private void showItem(final Context context, ImageItem item) {
+        setUiSuccess();
         final User user = item.getUser();
         setTextMaybe(username, context.getString(R.string.fmt_username), user.getUsername());
         setTextMaybe(displayName, context.getString(R.string.fmt_realname), user.getDisplayName());
@@ -126,5 +147,31 @@ public class PreviewFragment extends Fragment {
                 image,
                 Uri.parse(item.getThumb().getWebpUrl())
         );
+    }
+
+    private void setUiSuccess() {
+        retry.setVisibility(View.GONE);
+        loader.setVisibility(View.GONE);
+        namesRoot.setVisibility(View.VISIBLE);
+        gotoProfile.setVisibility(View.VISIBLE);
+        image.setVisibility(View.VISIBLE);
+    }
+
+    private void setUiLoading() {
+        retry.setVisibility(View.GONE);
+        namesRoot.setVisibility(View.INVISIBLE);
+        gotoProfile.setVisibility(View.GONE);
+        image.setVisibility(View.GONE);
+        loader.setVisibility(View.VISIBLE);
+    }
+
+    private void setUiError(int textRes, boolean allowRetry) {
+        retry.setText(textRes);
+        retry.setClickable(allowRetry);
+        retry.setVisibility(View.VISIBLE);
+        loader.setVisibility(View.GONE);
+        namesRoot.setVisibility(View.GONE);
+        gotoProfile.setVisibility(View.GONE);
+        image.setVisibility(View.GONE);
     }
 }

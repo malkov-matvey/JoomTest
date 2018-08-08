@@ -47,6 +47,32 @@
             android:textColor="@color/white" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/retry"
+        android:gravity="center_horizontal"
+        android:text="@string/error_loading_retry"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:drawableTop="@drawable/ic_error_outline_black_24dp"
+        android:drawablePadding="@dimen/offset_large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ProgressBar
+        android:id="@+id/loader"
+        style="@android:style/Widget.Material.ProgressBar.Large"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/names_root"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/image_content"
         android:layout_width="match_parent"
