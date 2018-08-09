@@ -22,3 +22,5 @@ Add giphy api key in your local `gradle.properties` like `giphy_api_key=<your_ap
 
 * I left just one `ViewModel` class because here it is kind of "pure" and holding no logic data, just `RestAdapter`, which seems ok for me.
 
+* I've done nothing with proguard and signing and all the other infrastructure stuff
+
