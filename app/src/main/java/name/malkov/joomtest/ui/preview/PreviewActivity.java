@@ -61,9 +61,7 @@ public class PreviewActivity extends AppCompatActivity {
         retry = findViewById(R.id.retry);
         loader = findViewById(R.id.loader);
 
-        if (savedInstanceState == null) {
-            checkIntent(getIntent());
-        }
+        checkIntent(getIntent());
     }
 
     @Override
@@ -96,7 +94,7 @@ public class PreviewActivity extends AppCompatActivity {
         }
     }
 
-    private void loadItem(ImagesViewModel vm, String id) {
+    private void loadItem(final ImagesViewModel vm, final String id) {
         final Observable<Boolean> loadingSignals = ClickObservable.clicks(this.retry, true)
                 .doOnNext(disposable -> setUiLoading());
         disposable.add(vm.bindById(id, loadingSignals)
@@ -104,6 +102,7 @@ public class PreviewActivity extends AppCompatActivity {
                 .subscribe(
                         item -> {
                             if (item.second == ImagesViewModel.CODE_OK) {
+                                getIntent().putExtra(ITEM_KEY, item.first);
                                 showItem(this, item.first);
                             } else if (item.second == ImagesViewModel.CODE_NOT_FOUND) {
                                 setUiError(R.string.not_found_error, false);
@@ -125,18 +124,23 @@ public class PreviewActivity extends AppCompatActivity {
         }
     }
 
-    private void showItem(final Context context, ImageItem item) {
+    private void showItem(final Context context, final ImageItem item) {
         setUiSuccess();
         final User user = item.getUser();
 
-        setTextMaybe(username, context.getString(R.string.fmt_username), user.getUsername());
-        setTextMaybe(displayName, context.getString(R.string.fmt_realname), user.getDisplayName());
-        setTextMaybe(twitter, context.getString(R.string.fmt_twitter), user.getTwitterName());
+        if (user != null) {
+            setTextMaybe(username, context.getString(R.string.fmt_username), user.getUsername());
+            setTextMaybe(displayName, context.getString(R.string.fmt_realname), user.getDisplayName());
+            setTextMaybe(twitter, context.getString(R.string.fmt_twitter), user.getTwitterName());
 
-        gotoProfile.setOnClickListener(view -> {
-            final CustomTabsIntent intent = (new CustomTabsIntent.Builder()).build();
-            intent.launchUrl(context, Uri.parse(user.getProfileUrl()));
-        });
+            gotoProfile.setOnClickListener(view -> {
+                final CustomTabsIntent intent = (new CustomTabsIntent.Builder()).build();
+                intent.launchUrl(context, Uri.parse(user.getProfileUrl()));
+            });
+        } else {
+            gotoProfile.setVisibility(View.GONE);
+            namesRoot.setVisibility(View.GONE);
+        }
 
         final Image preview = item.getPreview();
         if (preview.getWidthPx() != 0 && preview.getHeightPx() != 0) {

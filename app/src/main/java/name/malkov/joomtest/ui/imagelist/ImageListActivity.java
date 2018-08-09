@@ -107,7 +107,7 @@ public class ImageListActivity extends AppCompatActivity {
         loader.setVisibility(View.GONE);
     }
 
-    private void openPreview(ImageItem item) {
+    private void openPreview(final ImageItem item) {
         final Intent intent = PreviewActivity.prepareOpenIntent(this, item);
         startActivity(intent);
     }
