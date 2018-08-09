@@ -15,7 +15,7 @@ public class PagingRecyclerObservable {
         final Observable<Integer> paging = Observable.create(emitter -> {
             final RecyclerView.LayoutManager lm = rv.getLayoutManager();
             if (!(lm instanceof StaggeredGridLayoutManager)) {
-                throw new IllegalStateException("only GridLayoutManager supported by PagingObs");
+                throw new IllegalStateException("only StaggeredGridLayoutManager supported by PagingObs");
             }
             final StaggeredGridLayoutManager llm = (StaggeredGridLayoutManager) lm;
             final int[] pos = new int[llm.getSpanCount()];

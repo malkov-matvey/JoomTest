@@ -2,16 +2,14 @@ package name.malkov.joomtest.ui.preview;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -28,10 +26,9 @@ import name.malkov.joomtest.viewmodel.model.Image;
 import name.malkov.joomtest.viewmodel.model.ImageItem;
 import name.malkov.joomtest.viewmodel.model.User;
 
-public class PreviewFragment extends Fragment {
+public class PreviewActivity extends AppCompatActivity {
 
     private static String ITEM_KEY = "item_key";
-    private static String ID_KEY = "id_key";
     private final CompositeDisposable disposable = new CompositeDisposable();
     private final FrescoDrawingProtocol fresco = new FrescoDrawingProtocol();
     private Button gotoProfile;
@@ -43,55 +40,59 @@ public class PreviewFragment extends Fragment {
     private View namesRoot;
     private View loader;
 
-
-    public static Fragment newInstanceId(final String id) {
-        final PreviewFragment f = new PreviewFragment();
-        Bundle bundle = new Bundle(1);
-        bundle.putString(ID_KEY, id);
-        f.setArguments(bundle);
-        return f;
-    }
-
-    public static Fragment newInstanceItem(final ImageItem item) {
-        final PreviewFragment f = new PreviewFragment();
-        Bundle bundle = new Bundle(1);
-        bundle.putParcelable(ITEM_KEY, item);
-        f.setArguments(bundle);
-        return f;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_view_image, container, false);
+    public static Intent prepareOpenIntent(final Context context, final ImageItem item) {
+        final Intent intent = new Intent(context, PreviewActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.putExtra(ITEM_KEY, item);
+        return intent;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        gotoProfile = view.findViewById(R.id.goto_profile);
-        username = view.findViewById(R.id.username);
-        displayName = view.findViewById(R.id.displayName);
-        twitter = view.findViewById(R.id.twitter);
-        image = view.findViewById(R.id.image_content);
-        namesRoot = view.findViewById(R.id.names_root);
-        retry = view.findViewById(R.id.retry);
-        loader = view.findViewById(R.id.loader);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_view_image);
 
-        if (getArguments() != null && getArguments().containsKey(ITEM_KEY)) {
-            final ImageItem item = getArguments().getParcelable(ITEM_KEY);
-            showItem(view.getContext(), item);
-        } else if (getArguments() != null && getArguments().containsKey(ID_KEY)) {
-            final String id = getArguments().getString(ID_KEY);
-            final ImagesViewModel vm = ViewModelProviders.of(this).get(ImagesViewModel.class);
-            loadItem(vm, id);
+        gotoProfile = findViewById(R.id.goto_profile);
+        username = findViewById(R.id.username);
+        displayName = findViewById(R.id.displayName);
+        twitter = findViewById(R.id.twitter);
+        image = findViewById(R.id.image_content);
+        namesRoot = findViewById(R.id.names_root);
+        retry = findViewById(R.id.retry);
+        loader = findViewById(R.id.loader);
+
+        if (savedInstanceState == null) {
+            checkIntent(getIntent());
         }
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    protected void onDestroy() {
+        super.onDestroy();
         if (!disposable.isDisposed()) {
             disposable.dispose();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkIntent(intent);
+    }
+
+    private void checkIntent(final Intent intent) {
+        if (intent != null && Intent.ACTION_VIEW.equals(intent.getAction())) {
+            if (intent.hasExtra(ITEM_KEY)) {
+                final ImageItem item = intent.getParcelableExtra(ITEM_KEY);
+                showItem(this, item);
+            } else {
+                Uri data = intent.getData();
+                if (data != null) {
+                    String id = data.getLastPathSegment();
+                    final ImagesViewModel vm = ViewModelProviders.of(this).get(ImagesViewModel.class);
+                    loadItem(vm, id);
+                }
+            }
         }
     }
 
@@ -103,10 +104,7 @@ public class PreviewFragment extends Fragment {
                 .subscribe(
                         item -> {
                             if (item.second == ImagesViewModel.CODE_OK) {
-                                final Context context = getContext();
-                                if (context != null) {
-                                    showItem(context, item.first);
-                                }
+                                showItem(this, item.first);
                             } else if (item.second == ImagesViewModel.CODE_NOT_FOUND) {
                                 setUiError(R.string.not_found_error, false);
                             } else {
@@ -130,9 +128,11 @@ public class PreviewFragment extends Fragment {
     private void showItem(final Context context, ImageItem item) {
         setUiSuccess();
         final User user = item.getUser();
+
         setTextMaybe(username, context.getString(R.string.fmt_username), user.getUsername());
         setTextMaybe(displayName, context.getString(R.string.fmt_realname), user.getDisplayName());
         setTextMaybe(twitter, context.getString(R.string.fmt_twitter), user.getTwitterName());
+
         gotoProfile.setOnClickListener(view -> {
             final CustomTabsIntent intent = (new CustomTabsIntent.Builder()).build();
             intent.launchUrl(context, Uri.parse(user.getProfileUrl()));
@@ -143,10 +143,7 @@ public class PreviewFragment extends Fragment {
             final float ratio = preview.getWidthPx() / (float) preview.getHeightPx();
             image.setAspectRatio(ratio);
         }
-        fresco.showThumbAnimation(
-                image,
-                Uri.parse(item.getThumb().getWebpUrl())
-        );
+        fresco.showThumbAnimation(image, Uri.parse(item.getThumb().getWebpUrl()));
     }
 
     private void setUiSuccess() {
@@ -174,4 +171,5 @@ public class PreviewFragment extends Fragment {
         gotoProfile.setVisibility(View.GONE);
         image.setVisibility(View.GONE);
     }
+
 }

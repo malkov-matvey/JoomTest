@@ -1,4 +1,4 @@
-package name.malkov.joomtest.ui;
+package name.malkov.joomtest;
 
 import android.app.Application;
 

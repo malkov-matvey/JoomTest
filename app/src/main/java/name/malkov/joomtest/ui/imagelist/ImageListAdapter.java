@@ -58,9 +58,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.Imag
             final float ratio = image.getWidthPx() / (float) image.getHeightPx();
             vh.image.setAspectRatio(ratio);
         }
-        vh.itemView.setOnClickListener(view -> {
-            click.consume(item);
-        });
+        vh.itemView.setOnClickListener(view -> click.consume(item));
         imageProtocol.showThumbAnimation(vh.image, Uri.parse(image.getWebpUrl()));
     }
 
