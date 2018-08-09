@@ -8,7 +8,7 @@ Add giphy api key in your local `gradle.properties` like `giphy_api_key=<your_ap
 ### Libraries used
 * Retrolambda — A little bit overkill fopr small apps, but for fast development it was good.
 * RxJava2 — added for consestent flow between logic and UI and vise versa.
-* RxAndroid — normaly I don't use it, just added here because of `AndroidSchedulers`, usually it's the same but implemented * inside an application.
+* RxAndroid — normaly I don't use it, just added here because of `AndroidSchedulers`, usually it's the same but implemented inside an application.
 * Fresco — highweight, yes, but it's really easy to show webp gifs using it, so I mnade this choise.
 * Support Tabs — for giphy user profile showing inside webview.
 * Retrofit — for fast rest api client impllementation.
