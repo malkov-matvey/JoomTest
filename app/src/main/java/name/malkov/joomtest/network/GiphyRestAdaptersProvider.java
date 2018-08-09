@@ -4,15 +4,15 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class GiphyRestAdaptersFactory {
+public class GiphyRestAdaptersProvider {
 
     private static final Object lock = new Object();
     private static GiphyRestAdapter _INSTANCE;
 
     public static GiphyRestAdapter getInstance() {
-        synchronized (lock) {
-            if (_INSTANCE == null) {
-                synchronized (lock) {
+        if (_INSTANCE == null) {
+            synchronized (lock) {
+                if (_INSTANCE == null) {
                     _INSTANCE = createInstance();
                 }
             }

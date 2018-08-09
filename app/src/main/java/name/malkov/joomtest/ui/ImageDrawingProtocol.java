@@ -7,7 +7,5 @@ public interface ImageDrawingProtocol<T extends ImageView> {
 
     void showThumbAnimation(T image, Uri thumb);
 
-    void showAnimation(T image, Uri thumb, Uri origin);
-
     void cancel(T image);
 }

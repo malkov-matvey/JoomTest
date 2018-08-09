@@ -50,7 +50,7 @@ public class PreviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_view_image);
+        setContentView(R.layout.activity_view_image);
 
         gotoProfile = findViewById(R.id.goto_profile);
         username = findViewById(R.id.username);

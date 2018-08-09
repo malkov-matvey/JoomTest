@@ -25,7 +25,6 @@ public class ImageListActivity extends AppCompatActivity {
 
     private final CompositeDisposable disposable = new CompositeDisposable();
 
-    private final ClickConsumer<ImageItem> click = this::openPreview;
     private View retry;
     private RecyclerView list;
     private SwipeRefreshLayout refresh;
@@ -35,12 +34,14 @@ public class ImageListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_image_list);
+        setContentView(R.layout.activity_image_list);
 
         refresh = findViewById(R.id.refreshRoot);
         list = findViewById(R.id.list);
         retry = findViewById(R.id.retry);
         loader = findViewById(R.id.loader);
+
+        final ClickConsumer<ImageItem> click = this::openPreview;
         adapter = new ImageListAdapter(new FrescoDrawingProtocol(), click);
 
         final int gridSize = getResources().getInteger(R.integer.grid_size);

@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
+def GIPHY_API_KEY = '"' + giphy_api_key + '"' ?: '"No giphy_api_key defined in local gradle.properties"'
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -10,6 +12,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField 'String', 'GIPHY_API_KEY', GIPHY_API_KEY
     }
     buildTypes {
         release {

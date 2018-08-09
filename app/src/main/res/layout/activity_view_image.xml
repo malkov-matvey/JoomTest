@@ -17,7 +17,7 @@
 
     <LinearLayout
         android:id="@+id/names_root"
-        android:layout_width="wrap_content"
+        android:layout_width="0dip"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingBottom="@dimen/offset_medium"
@@ -30,21 +30,21 @@
 
         <TextView
             android:id="@+id/username"
+            style="@style/UserViewerInfo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/displayName"
+            style="@style/UserViewerInfo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/twitter"
+            style="@style/UserViewerInfo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <TextView
