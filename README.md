@@ -18,6 +18,8 @@ Add giphy api key in your local `gradle.properties` like `giphy_api_key=<your_ap
 ### Good to notice
 * I'm not managing lifecycle inside ViewModel and not saving state intentionally, as I think leaving it simplier here will be better. For example, I can use Subjects for it to save state inside ViewModel between Activity recreations.
 
+* Also, by making state saving in ViewModels we can bind and unbind to VMs in onStart/onStop, but it will require work as we also need to hold and refresh `paging` and `refresh` and `retry` signals in case our UI will be destroyed. So for now its just onCreate/onDestroy with mno state saving.
+
 * I made `PreviewActivity` singleTop, so it can be launched inside other apps like messengers when clicking deeplink.
 
 * I left just one `ViewModel` class because here it is kind of "pure" and holding no logic data, just `RestAdapter`, which seems ok for me.
